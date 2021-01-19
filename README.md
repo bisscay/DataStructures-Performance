@@ -20,7 +20,7 @@ Focuses on implementations in the document package.
 #### Week 3
 Centers on performance, below is a plot comparing two classes in the document package.
 
-BasicDocument in blue has a steeper linear slope performing poorly compared to EfficientDocument in red. 
+BasicDocument in blue has a steeper linear slope performing poorly as the input scales, compared to EfficientDocument in red. 
 
 [EfficientDocument](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/document/EfficientDocument.java)
 
