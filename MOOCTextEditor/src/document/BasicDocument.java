@@ -45,14 +45,13 @@ public class BasicDocument extends Document
 		
 		
 		// Split string at space
-		//String[] stringArray = getText().split("\\s+"); // Dead Code
 		List<String> stringArray = getTokens("[^\\s]+"); // O(n): computed once
 		// hold word count
 		int wordCount = 0;
 		
 		// if string in array matches alphabets - assuming no alphanumeric string,
-		for(String query : stringArray) { // O(n)
-			if(query.matches("\\D*[a-zA-Z]+\\D*")) // O(1): irrespective of input size
+		for(String query : stringArray) { // O(n): stringArray size governed by text
+			if(query.matches("\\D*[a-zA-Z]+\\D*")) // O(1): irrespective of text size
 				// update word count
 				++wordCount;
 		}
@@ -109,7 +108,7 @@ public class BasicDocument extends Document
 	 * @return The number of syllables in the document.
 	 */
 	@Override
-	public int getNumSyllables() // O(n^2)
+	public int getNumSyllables() // O(n)
 	{
 	    //TODO: Implement this method in week 2.  See the Module 2 support videos 
         // if you need help.  And note that there is no need to use a regular
@@ -124,8 +123,8 @@ public class BasicDocument extends Document
 		List<String> wordArray = getTokens("[a-zA-Z]+"); // O(n); computed once
 		
 		// increase total count by each word's syllable count
-		for(String word : wordArray) { // O(n^2)
-			totalCount += countSyllables(word); // O(n)
+		for(String word : wordArray) { // O(n): text-size considered
+			totalCount += countSyllables(word); // O(1): text and not word as reference
 		}
 		
         return totalCount;
