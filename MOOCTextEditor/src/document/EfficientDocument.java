@@ -19,7 +19,7 @@ public class EfficientDocument extends Document {
 	{
 		super(text);
 		// all text processed once and not in each method call
-		processText(); // O(n^2)
+		processText(); // O(n)
 	}
 	
 	
@@ -32,7 +32,7 @@ public class EfficientDocument extends Document {
 	 * @param tok The string to check
 	 * @return true if tok is a word, false if it is punctuation. 
 	 */
-	private boolean isWord(String tok) // O(n) : linear search
+	private boolean isWord(String tok) // O(1) : linear search, but word size referenced
 	{
 	    // Note: This is a fast way of checking whether a string is a word
 	    // You probably don't want to change it.
@@ -44,7 +44,7 @@ public class EfficientDocument extends Document {
      * and sentences, and set the member variables appropriately.
      * Words, sentences and syllables are defined as described below. 
      */
-	private void processText() // O(n^2)
+	private void processText() // O(n)
 	{
 		// Call getTokens on the text to preserve separate strings that are 
 		// either words or sentence-ending punctuation.  Ignore everything
@@ -53,19 +53,19 @@ public class EfficientDocument extends Document {
 		// OF THIS METHOD.
 		
 		// Hold just Words or just contiguous-Punctuation
-		List<String> tokens = getTokens("[!?.]+|[a-zA-Z]+"); // O(n)
+		List<String> tokens = getTokens("[!?.]+|[a-zA-Z]+"); // O(n): tokens computed once in scope
 		
 		String query;
 		// Check each string in tokens for words
 		int tokensSize = tokens.size();
-		for(int i = 0; i < tokensSize; ++i) { // O(n^2)
-			query = tokens.get(i); // O(1)
+		for(int i = 0; i < tokensSize; ++i) { // O(n): span scales with text
+			query = tokens.get(i); // O(1): index-based access
 			// strings with punctuation are ignored
-			if(isWord(query)) { // O(n)
+			if(isWord(query)) { // O(1): word comparison constant for a text
 				// increment word count
 				++this.numWords;
 				// compute syllable count for found word and update total count
-				this.numSyllables += countSyllables(query); // O(n)
+				this.numSyllables += countSyllables(query); // O(1): word analysis
 			}
 		}
 		
@@ -75,7 +75,7 @@ public class EfficientDocument extends Document {
 		// Account for single line sentences without punctuation
 		// if the last entry in tokens is not empty and a word
 		if(tokensSize != 0) {
-			if(isWord(tokens.get(tokensSize-1))) { // O(n)
+			if(isWord(tokens.get(tokensSize-1))) { // O(1): computation on a word
 				this.numSentences += 1;
 			}
 		}
@@ -98,7 +98,7 @@ public class EfficientDocument extends Document {
 	 * @return The number of sentences in the document.
 	 */
 	@Override
-	public int getNumSentences() { 
+	public int getNumSentences() { // O(1) after object creation
 		//TODO: write this method.  Hint: It's simple
 		return this.numSentences;
 	}
@@ -119,7 +119,7 @@ public class EfficientDocument extends Document {
 	 * @return The number of words in the document.
 	 */
 	@Override
-	public int getNumWords() { 
+	public int getNumWords() { // O(1) after object creation
 		//TODO: write this method.  Hint: It's simple
 	    return this.numWords;
 	}
@@ -141,7 +141,7 @@ public class EfficientDocument extends Document {
 	 * @return The number of syllables in the document.
 	 */
 	@Override
-	public int getNumSyllables() { 
+	public int getNumSyllables() { // O(1) after object creation
         //TODO: write this method.  Hint: It's simple
         return this.numSyllables;
 	}

@@ -4,22 +4,22 @@ package document;
  * A class that represents a text document
  * @author UC San Diego Intermediate Programming MOOC team
  * 
- * This is tricky and a bit confusing, but from further analysis,
- * the tightest Big-O running time when getFleschScore is called for BasicDocument,
+ * bAe.
+ * This is tricky, but from analysis,
+ * the tightest Big-O running time when getFleschScore is called for BasicDocument
  * is linear.
- * Multiple passes for getNumSentences, getNumWords and getNumSyllables are made,
+ * Multiple passes for getNumSentences, getNumWords and getNumSyllables are made
  * each time getFleschScore is called, but each pass through text is linear.
  * 
- * Ignore each nested-component Big-O analysis below,
- * for this level of abstraction, getFleschScore has an O(n),
+ * For this level of abstraction, getFleschScore has an O(n),
  * where n is document's length.
  * 
  * For EfficientDocument, initialization of numWords, numSentences and numSyllables,
- * passes through once when the constructor is instantiated.
- * Every other subsequent call is to this classe's properties is linear.
- * This is what give this class it's performance advantage.
+ * passes through once when the constructor is instantiated O(n).
+ * Subsequent calls to this classe's properties is done in constant time O(1).
+ * This is what gives this class it's performance advantage.
  * 
- * A diagram will be attached to show the linear slopes from the benchmark analysis,
+ * A diagram will be attached to show the linear slopes from the benchmark analysis
  * as the input text scales, BasicDocument experiences a steeper slope from calls to getFleschScore.
  */
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public abstract class Document {
 	 * @return A List of tokens from the document text that match the regex 
 	 *   pattern
 	 */
-	protected List<String> getTokens(String pattern) // O(1)
+	protected List<String> getTokens(String pattern) // O(n)
 	{
 		ArrayList<String> tokens = new ArrayList<String>();
 		Pattern tokSplitter = Pattern.compile(pattern); // O(1)
@@ -58,7 +58,7 @@ public abstract class Document {
 		// an O(1) is estimated; 
 		// one reason; the pattern will be the same for it's desired operation irrespective of text input length
 		
-		while (m.find()) { // O(n): search on scaling text; but O(1) considering flesch abstraction
+		while (m.find()) { // O(n): search on scaling text
 			tokens.add(m.group()); // a lot of nested methods; O(1) estimate
 		}
 		
@@ -70,7 +70,7 @@ public abstract class Document {
 	 * @param character The char to be evaluated
 	 * @return A boolean true if the character is a vowel
 	 */
-	private boolean isVowel(char character) { // O(1)
+	private boolean isVowel(char character) { // O(1): character comparison
 		
 		if(character == 'a' || character == 'e' || character == 'i' ||
 				character == 'o' || character == 'u' || character == 'y' ||
@@ -86,10 +86,10 @@ public abstract class Document {
 	 * @param word A String of characters to be considered
 	 * @return An int index of the first found vowel
 	 */
-	private int getFirstVowelIndex(String word) { // O(n)
+	private int getFirstVowelIndex(String word) { // O(1)
 		int wordLength = word.length(); // O(1): return already computed value
 		
-		for(int i = 0; i < wordLength; ++i) { // 0(n)
+		for(int i = 0; i < wordLength; ++i) { // 0(1): reference is on text-scale and not word-scale
 			char character = word.charAt(i); // O(1): index-based access
 			// check if vowel
 			if(isVowel(character)) { // 0(1)
@@ -121,7 +121,7 @@ public abstract class Document {
 	 *       is not considered a syllable unless the word has no other syllables. 
 	 *       You should consider y a vowel.
 	 */
-	protected int countSyllables(String word) // O(n)
+	protected int countSyllables(String word) // O(1)
 	{
 		// TODO: Implement this method so that you can call it from the 
 	    // getNumSyllables method in BasicDocument (module 2) and 
@@ -143,7 +143,7 @@ public abstract class Document {
 		
 		// Potentially more syllables
 		// starting from next index
-		for(int i = vowelIndex + 1; i < stringLength; ++i) { // O(n)
+		for(int i = vowelIndex + 1; i < stringLength; ++i) { // O(1): string is word not text
 			char character = word.charAt(i); // O(1)
 			// check if character is a vowel
 			if(isVowel(character)) { // O(1)
@@ -226,16 +226,16 @@ public abstract class Document {
 	}
 	
 	/** return the Flesch readability score of this document */
-	public double getFleschScore() // Basic: O(n^2)
+	public double getFleschScore() // O(n); EfficientDocument: O(1) after Document instantiation
 	{
 	    // TODO: You will play with this method in week 1, and 
 		// then implement it in week 2
 	    
 		// Flesch score = 206.835 - 1.015 (#words / #sentences)
 		// - 84.6 (#syllables/#words)
-		double NumSentences = getNumSentences(); // Basic: O(n); 
-		double NumWords = getNumWords(); // Basic: O(n)
-		double NumSyllables = getNumSyllables(); // Basic: O(n^2)
+		double NumSentences = getNumSentences(); // O(n); EfficientDocument: O(1) after instantiation
+		double NumWords = getNumWords(); // O(n); EfficientDocument: O(1) after instantiation
+		double NumSyllables = getNumSyllables(); // O(n); EfficientDocument: O(1) after instantiation
 		
 		return (206.835 - (1.015 * (NumWords/NumSentences))
 		- (84.6 * (NumSyllables/NumWords))); // O(1)
