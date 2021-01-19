@@ -32,7 +32,7 @@ public class BasicDocument extends Document
 	 * @return The number of words in the document.
 	 */
 	@Override
-	public int getNumWords()
+	public int getNumWords() // O(n)
 	{
 		//TODO: Implement this method in week 2 according to the comments above.  
 		// See the Module 2 support videos if you need help.
@@ -45,13 +45,14 @@ public class BasicDocument extends Document
 		
 		
 		// Split string at space
-		String[] stringArray = getText().split("\\s+");
+		//String[] stringArray = getText().split("\\s+"); // Dead Code
+		List<String> stringArray = getTokens("[^\\s]+"); // O(n): computed once
 		// hold word count
 		int wordCount = 0;
 		
 		// if string in array matches alphabets - assuming no alphanumeric string,
-		for(String query : stringArray) {
-			if(query.matches("\\D*[a-zA-Z]+\\D*"))
+		for(String query : stringArray) { // O(n)
+			if(query.matches("\\D*[a-zA-Z]+\\D*")) // O(1): irrespective of input size
 				// update word count
 				++wordCount;
 		}
@@ -73,7 +74,7 @@ public class BasicDocument extends Document
 	 * @return The number of sentences in the document.
 	 */
 	@Override
-	public int getNumSentences()
+	public int getNumSentences() // O(n)
 	{
 	    //TODO: Implement this method.  See the Module 2 support videos 
         // if you need help.
@@ -83,14 +84,14 @@ public class BasicDocument extends Document
 		// return array size
 		
 		// Split at punctuation (?|.|!)
-		String[] sentenceArray = getText().split("[.|!|?]+");
+		String[] sentenceArray = getText().split("[.!?]+"); // O(n); Not fastpath
 		
 		// Empty string
-		if(sentenceArray[0].matches("\\s*"))
+		if(sentenceArray[0].matches("\\s*")) // O(1)
 			return 0;
 		
 		// return array size
-		return sentenceArray.length;
+		return sentenceArray.length; // O(1)
 	}
 	
 	/**
@@ -108,7 +109,7 @@ public class BasicDocument extends Document
 	 * @return The number of syllables in the document.
 	 */
 	@Override
-	public int getNumSyllables()
+	public int getNumSyllables() // O(n^2)
 	{
 	    //TODO: Implement this method in week 2.  See the Module 2 support videos 
         // if you need help.  And note that there is no need to use a regular
@@ -119,11 +120,12 @@ public class BasicDocument extends Document
 		int totalCount = 0;
 		
 		// split at any character that does not make up a word - assuming no alphanumeric string,
-		String[] wordArray = getText().split("[^a-zA-Z]+");
+		//String[] wordArray = getText().split("[^a-zA-Z]+");
+		List<String> wordArray = getTokens("[a-zA-Z]+"); // O(n); computed once
 		
 		// increase total count by each word's syllable count
-		for(String word : wordArray) {
-			totalCount += countSyllables(word);
+		for(String word : wordArray) { // O(n^2)
+			totalCount += countSyllables(word); // O(n)
 		}
 		
         return totalCount;

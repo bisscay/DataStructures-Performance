@@ -18,7 +18,8 @@ public class EfficientDocument extends Document {
 	public EfficientDocument(String text)
 	{
 		super(text);
-		processText();
+		// all text processed once and not in each method call
+		processText(); // O(n^2)
 	}
 	
 	
@@ -31,7 +32,7 @@ public class EfficientDocument extends Document {
 	 * @param tok The string to check
 	 * @return true if tok is a word, false if it is punctuation. 
 	 */
-	private boolean isWord(String tok)
+	private boolean isWord(String tok) // O(n) : linear search
 	{
 	    // Note: This is a fast way of checking whether a string is a word
 	    // You probably don't want to change it.
@@ -43,15 +44,41 @@ public class EfficientDocument extends Document {
      * and sentences, and set the member variables appropriately.
      * Words, sentences and syllables are defined as described below. 
      */
-	private void processText()
+	private void processText() // O(n^2)
 	{
 		// Call getTokens on the text to preserve separate strings that are 
 		// either words or sentence-ending punctuation.  Ignore everything
-		// That is not a word or a sentence-ending puctuation.
+		// That is not a word or a sentence-ending punctuation.
 		// MAKE SURE YOU UNDERSTAND THIS LINE BEFORE YOU CODE THE REST
 		// OF THIS METHOD.
-		List<String> tokens = getTokens("[!?.]+|[a-zA-Z]+");
 		
+		// Hold just Words or just contiguous-Punctuation
+		List<String> tokens = getTokens("[!?.]+|[a-zA-Z]+"); // O(n)
+		
+		String query;
+		// Check each string in tokens for words
+		int tokensSize = tokens.size();
+		for(int i = 0; i < tokensSize; ++i) { // O(n^2)
+			query = tokens.get(i); // O(1)
+			// strings with punctuation are ignored
+			if(isWord(query)) { // O(n)
+				// increment word count
+				++this.numWords;
+				// compute syllable count for found word and update total count
+				this.numSyllables += countSyllables(query); // O(n)
+			}
+		}
+		
+		// Everything else in tokens-length will be a sentence-punctuation
+		this.numSentences = tokensSize - this.numWords;
+		
+		// Account for single line sentences without punctuation
+		// if the last entry in tokens is not empty and a word
+		if(tokensSize != 0) {
+			if(isWord(tokens.get(tokensSize-1))) { // O(n)
+				this.numSentences += 1;
+			}
+		}
 		// TODO: Finish this method.  Remember the countSyllables method from 
 		// Document.  That will come in handy here.  isWord defined above will also help.
 	}
@@ -71,9 +98,9 @@ public class EfficientDocument extends Document {
 	 * @return The number of sentences in the document.
 	 */
 	@Override
-	public int getNumSentences() {
+	public int getNumSentences() { 
 		//TODO: write this method.  Hint: It's simple
-		return 0;
+		return this.numSentences;
 	}
 
 	
@@ -92,9 +119,9 @@ public class EfficientDocument extends Document {
 	 * @return The number of words in the document.
 	 */
 	@Override
-	public int getNumWords() {
+	public int getNumWords() { 
 		//TODO: write this method.  Hint: It's simple
-	    return 0;
+	    return this.numWords;
 	}
 
 
@@ -114,13 +141,21 @@ public class EfficientDocument extends Document {
 	 * @return The number of syllables in the document.
 	 */
 	@Override
-	public int getNumSyllables() {
+	public int getNumSyllables() { 
         //TODO: write this method.  Hint: It's simple
-        return 0;
+        return this.numSyllables;
 	}
 	
-	// Can be used for testing
-	// We encourage you to add your own tests here.
+	/**
+	 * Can be used for testing
+	 * We encourage you to add your own tests here.
+	 * 
+	 * Each of the test cases below uses the method testCase.  The first 
+	 * argument to testCase is a Document object, created with the string shown.
+	 * 
+	 * The next three arguments are the number of syllables, words and sentences 
+	 * in the string, respectively.
+	 */
 	public static void main(String[] args)
 	{
 	    testCase(new EfficientDocument("This is a test.  How many???  "
@@ -139,6 +174,8 @@ public class EfficientDocument extends Document {
 		testCase(new EfficientDocument("Sentences?!"), 3, 1, 1);
 		testCase(new EfficientDocument("Lorem ipsum dolor sit amet, qui ex choro quodsi moderatius, nam dolores explicari forensibus ad."),
 		         32, 15, 1);
+		testCase(new EfficientDocument("12345"),0,0,0); // NO words by definition, equivalent to empty string - ""
+		testCase(new EfficientDocument("1?23.!45"),0,0,2); // Three empty strings but two sentence termination  
 		
 	}
 	

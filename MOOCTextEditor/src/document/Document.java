@@ -3,11 +3,26 @@ package document;
 /** 
  * A class that represents a text document
  * @author UC San Diego Intermediate Programming MOOC team
+ * 
+ * This is tricky and a bit confusing, but from further analysis,
+ * the tightest Big-O running time when getFleschScore is called for BasicDocument,
+ * is linear.
+ * Multiple passes for getNumSentences, getNumWords and getNumSyllables are made,
+ * each time getFleschScore is called, but each pass through text is linear.
+ * 
+ * Ignore each nested-component Big-O analysis below,
+ * for this level of abstraction, getFleschScore has an O(n),
+ * where n is document's length.
+ * 
+ * For EfficientDocument, initialization of numWords, numSentences and numSyllables,
+ * passes through once when the constructor is instantiated.
+ * Every other subsequent call is to this classe's properties is linear.
+ * This is what give this class it's performance advantage.
+ * 
+ * A diagram will be attached to show the linear slopes from the benchmark analysis,
+ * as the input text scales, BasicDocument experiences a steeper slope from calls to getFleschScore.
  */
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,14 +47,19 @@ public abstract class Document {
 	 * @return A List of tokens from the document text that match the regex 
 	 *   pattern
 	 */
-	protected List<String> getTokens(String pattern)
+	protected List<String> getTokens(String pattern) // O(1)
 	{
 		ArrayList<String> tokens = new ArrayList<String>();
-		Pattern tokSplitter = Pattern.compile(pattern);
-		Matcher m = tokSplitter.matcher(text);
+		Pattern tokSplitter = Pattern.compile(pattern); // O(1)
+		Matcher m = tokSplitter.matcher(text); // O(1)
 		
-		while (m.find()) {
-			tokens.add(m.group());
+		// compile method has a lot of nested operations;
+		// from a high level abstraction of the possible operations,
+		// an O(1) is estimated; 
+		// one reason; the pattern will be the same for it's desired operation irrespective of text input length
+		
+		while (m.find()) { // O(n): search on scaling text; but O(1) considering flesch abstraction
+			tokens.add(m.group()); // a lot of nested methods; O(1) estimate
 		}
 		
 		return tokens;
@@ -50,7 +70,7 @@ public abstract class Document {
 	 * @param character The char to be evaluated
 	 * @return A boolean true if the character is a vowel
 	 */
-	private boolean isVowel(char character) {
+	private boolean isVowel(char character) { // O(1)
 		
 		if(character == 'a' || character == 'e' || character == 'i' ||
 				character == 'o' || character == 'u' || character == 'y' ||
@@ -66,13 +86,13 @@ public abstract class Document {
 	 * @param word A String of characters to be considered
 	 * @return An int index of the first found vowel
 	 */
-	private int getFirstVowelIndex(String word) {
-		int wordLength = word.length();
+	private int getFirstVowelIndex(String word) { // O(n)
+		int wordLength = word.length(); // O(1): return already computed value
 		
-		for(int i = 0; i < wordLength; ++i) {
-			char character = word.charAt(i);
+		for(int i = 0; i < wordLength; ++i) { // 0(n)
+			char character = word.charAt(i); // O(1): index-based access
 			// check if vowel
-			if(isVowel(character)) {
+			if(isVowel(character)) { // 0(1)
 				// track first vowel-index
 				return i;
 			}
@@ -101,14 +121,14 @@ public abstract class Document {
 	 *       is not considered a syllable unless the word has no other syllables. 
 	 *       You should consider y a vowel.
 	 */
-	protected int countSyllables(String word)
+	protected int countSyllables(String word) // O(n)
 	{
 		// TODO: Implement this method so that you can call it from the 
 	    // getNumSyllables method in BasicDocument (module 2) and 
 	    // EfficientDocument (module 3).
 		
 		// Get first vowel-index
-		int vowelIndex = getFirstVowelIndex(word);
+		int vowelIndex = getFirstVowelIndex(word); // O(1)
 		int syllableCount = 1;
 		
 		// No syllables present
@@ -123,10 +143,10 @@ public abstract class Document {
 		
 		// Potentially more syllables
 		// starting from next index
-		for(int i = vowelIndex + 1; i < stringLength; ++i) {
-			char character = word.charAt(i);
+		for(int i = vowelIndex + 1; i < stringLength; ++i) { // O(n)
+			char character = word.charAt(i); // O(1)
 			// check if character is a vowel
-			if(isVowel(character)) {
+			if(isVowel(character)) { // O(1)
 				// check for skip in contiguous nature
 				// check if new vowel-index is greater than previous by 2 or more
 				if(i > (vowelIndex + 1)) {
@@ -140,7 +160,7 @@ public abstract class Document {
 		// Consider words ending in 'e' with more than one syllables
 		// if the last letter is A LONE 'e' & syllable count > 0,
 		if(syllableCount > 0 && word.charAt(lastIndex) == 'e' && 
-				!isVowel(word.charAt(lastIndex-1))) {
+				!isVowel(word.charAt(lastIndex-1))) { // O(1)
 			// subtract one from syllable count
 			--syllableCount;
 		}
@@ -200,17 +220,25 @@ public abstract class Document {
 	public abstract int getNumSyllables();
 	
 	/** Return the entire text of this document */
-	public String getText()
+	public String getText() // O(1)
 	{
 		return this.text;
 	}
 	
 	/** return the Flesch readability score of this document */
-	public double getFleschScore()
+	public double getFleschScore() // Basic: O(n^2)
 	{
 	    // TODO: You will play with this method in week 1, and 
 		// then implement it in week 2
-	    return text.length();
+	    
+		// Flesch score = 206.835 - 1.015 (#words / #sentences)
+		// - 84.6 (#syllables/#words)
+		double NumSentences = getNumSentences(); // Basic: O(n); 
+		double NumWords = getNumWords(); // Basic: O(n)
+		double NumSyllables = getNumSyllables(); // Basic: O(n^2)
+		
+		return (206.835 - (1.015 * (NumWords/NumSentences))
+		- (84.6 * (NumSyllables/NumWords))); // O(1)
 	}
 	
 	

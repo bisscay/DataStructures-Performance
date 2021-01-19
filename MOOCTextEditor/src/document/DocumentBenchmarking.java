@@ -14,25 +14,28 @@ public class DocumentBenchmarking {
 
 	
 	public static void main(String [] args) {
+		// Reference keys
+//		double n1, n, efficientReference = 6.52163451E8; // 4.18E9 3.6E9
+//		double basicReference = 3.417878149E9;
 
 	    // Run each test more than once to get bigger numbers and less noise.
 	    // You can try playing around with this number.
-	    int trials = 100;
+	    int trials = 100;//100 // create object and call flesh score the amount of time
 
 	    // The text to test on
 	    String textfile = "data/warAndPeace.txt";
-		
+	    
 	    // The amount of characters to increment each step
 	    // You can play around with this
-		int increment = 20000;
+		int increment = 20000;//20000 // scale input by this amount of increase
 
 		// The number of steps to run.  
 		// You can play around with this.
-		int numSteps = 20;
+		int numSteps = 20; // 20; // print out this number of time
 		
-		// THe number of characters to start with. 
+		// The number of characters to start with. 
 		// You can play around with this.
-		int start = 50000;
+		int start = 50000;//50000;
 		
 		// TODO: Fill in the rest of this method so that it runs two loops
 		// and prints out timing results as described in the assignment 
@@ -45,19 +48,54 @@ public class DocumentBenchmarking {
 			
 			/* Each time through this loop you should:
 			 * 1. Print out numToCheck followed by a tab (\t) (NOT a newline)
-			 * 2. Read numToCheck characters from the file into a String
+			 */
+			System.out.print(numToCheck +"\t");
+			
+			 /* 2. Read numToCheck characters from the file into a String
 			 *     Hint: use the helper method below.
-			 * 3. Time a loop that runs trials times (trials is the variable above) that:
+			 */
+			String characterQuery = getStringFromFile(textfile, numToCheck);
+			 
+			 /* 3. Time a loop that runs trials times (trials is the variable above) that:
 			 *     a. Creates a BasicDocument 
 			 *     b. Calls fleshScore on this document
-			 * 4. Print out the time it took to complete the loop in step 3 
+			 */
+			long startTime = System.nanoTime();
+			for(int i = 0; i < trials; ++i) {
+				Document basic = new BasicDocument(characterQuery);
+				basic.getFleschScore();
+			}
+			long endTime = System.nanoTime();
+			
+			 /* 4. Print out the time it took to complete the loop in step 3 
 			 *      (on the same line as the first print statement) followed by a tab (\t)
-			 * 5. Time a loop that runs trials times (trials is the variable above) that:
+			 */
+			double duration = endTime - startTime;
+			System.out.print(duration +"\t");
+			
+			 /* 5. Time a loop that runs trials times (trials is the variable above) that:
 			 *     a. Creates an EfficientDocument 
 			 *     b. Calls fleshScore on this document
-			 * 6. Print out the time it took to complete the loop in step 5 
+			 */
+			startTime = System.nanoTime();
+			for(int i = 0; i < trials; ++i) {
+				Document efficient = new EfficientDocument(characterQuery);
+				efficient.getFleschScore();
+			}
+			endTime = System.nanoTime();
+			
+			 /* 6. Print out the time it took to complete the loop in step 5 
 			 *      (on the same line as the first print statement) followed by a newline (\n) 
-			 */  
+			 */
+			duration = endTime - startTime;
+			System.out.print(duration +"\n");
+			
+			// Reference plots for n (linear), n^2 (quadratic) and n^3 (polynomial/cube)
+//			n1 = (efficientReference + (efficientReference * numToCheck / start));
+//			n = (efficientReference + (efficientReference * numToCheck / start));
+//			n = n * n;
+//			System.out.print(n1 +"\t");
+//			System.out.print(n +"\n");
 			 
 		}
 	

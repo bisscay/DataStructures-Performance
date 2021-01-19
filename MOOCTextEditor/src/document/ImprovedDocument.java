@@ -1,8 +1,8 @@
 package document;
 
 /**
- * An implementation of the Document abstract class
- * @author bae
+ * An extension of the BasicDocument abstract class
+ * @author bAe
  */
 public class ImprovedDocument extends BasicDocument {
 	
