@@ -22,12 +22,16 @@ public class MyLinkedListTester {
 	MyLinkedList<Integer> emptyList;
 	MyLinkedList<Integer> longerList;
 	MyLinkedList<Integer> list1;
+	// Clear-box utility
+	LLNode<String> listNode;
+	LLNode<Integer> intNode;
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		// Note: setup @Before is called for each test
 		// Feel free to use these lists, or add your own
 	    shortList = new MyLinkedList<String>();
 		shortList.add("A");
@@ -115,6 +119,27 @@ public class MyLinkedListTester {
 		assertEquals("Remove: check size is correct ", 2, list1.size());
 		
 		// TODO: Add more tests here
+		
+		// Check removal on empty list - high bound removal
+		try {
+			emptyList.remove(0);
+			fail("Remove: from empty list, high bound check");
+		} 
+		catch(IndexOutOfBoundsException e) {
+		}
+		
+		// Test low-out-of-bound removal
+		try {
+			shortList.remove(-1);
+			fail("Remove: lower-bound check");
+		} catch (IndexOutOfBoundsException e) {
+		}
+		
+		// Clear-box tests
+		// head holds reference to sentinel
+		intNode = list1.head.next.next; // node2 - element 1
+		assertEquals("Remove: check pointers ", intNode.prev.data, (Integer)21);
+		
 	}
 	
 	/** Test adding an element into the end of the list, specifically
@@ -125,6 +150,20 @@ public class MyLinkedListTester {
 	{
         // TODO: implement this test
 		
+		// test Null addition
+		try {
+			emptyList.add(null);
+			fail("AddEnd: null addition");
+		} catch(NullPointerException e) {
+		}
+		
+		assertEquals("AddEnd: check first entry","A",shortList.get(0));
+		if(shortList.add("C")) {
+			assertEquals("AddEnd: check multiple entry & return value","C",shortList.get(2));
+		}
+		assertEquals("AddEnd: check size",3,shortList.size());
+		assertEquals("AddEnd: check previous pointer ",shortList.tail.prev.data, "C");
+
 	}
 
 	
@@ -133,6 +172,12 @@ public class MyLinkedListTester {
 	public void testSize()
 	{
 		// TODO: implement this test
+		// Mostly tested in other tests
+		// test addEnd, add-index, remove, set
+		
+		// test on empty list
+		assertEquals("Size: check empty list",0, emptyList.size());
+		
 	}
 
 	
@@ -145,6 +190,37 @@ public class MyLinkedListTester {
 	public void testAddAtIndex()
 	{
         // TODO: implement this test
+		// test for Null addition, exception should be thrown
+		try {
+			shortList.add(0, null);
+			fail("AddIndex: addition of null");
+		} catch(NullPointerException e) {
+		}
+		
+		// test out-of-bounds exception
+		try {
+			shortList.add(-1, "C");
+			fail("AddIndex: addition at negative index");
+		} catch(IndexOutOfBoundsException e) {
+		}
+		try {
+			longerList.add(LONG_LIST_LENGTH+1, 12);
+			fail("AddIndex: addition at size index");
+		} catch(IndexOutOfBoundsException e) {
+		}
+		
+		// test addition on empty list - test addition at list-size
+		emptyList.add(0,1);
+		assertEquals("AddIndex: check empty-list size", emptyList.size(), 1);
+		assertEquals("AddIndex: addition at 0-index in empty list", emptyList.get(0), Integer.valueOf(1));
+		// test addition on multiple-element list
+		shortList.add(1, "Mid");
+		assertEquals("AddIndex: addition at mid-index", shortList.get(1), "Mid");
+		assertEquals("AddIndex: check list size", shortList.size(), 3);
+		// test pointers - clear-box test
+		listNode = shortList.head.next.next;
+		assertEquals("AddIndex: check mid-index pointers",listNode.prev.data, "A");
+		assertEquals("AddIndex: check pointers after added element", listNode.next.prev.data, "Mid");
 		
 	}
 	
@@ -153,9 +229,31 @@ public class MyLinkedListTester {
 	public void testSet()
 	{
 	    // TODO: implement this test
-	    
+		 
+	    shortList.set(0, "C");
+		// check returned value
+	    assertEquals("Set: check returned value", shortList.get(0),"C");
+		// test null entry
+	    try {
+	    	shortList.set(0,null);
+	    	fail("Set: null element");
+	    } catch(NullPointerException e) {
+	    }
+		// test out of bound index
+	    try {
+	    	emptyList.set(0,1);
+	    	fail("Set: out of bound index");
+	    } catch(IndexOutOfBoundsException e) {
+	    }
+		// test edge-cases
+	    // potentially redundant tests - due to sentinels
+	    // set on single entry list
+	    // set on first index of multi-entry list
+	    // set on last index of multi-entry list
+	    // set on middle index of multi-entry list
+	    // set on null and out-of-bounds for each condition above
+	     
 	}
-	
 	
 	// TODO: Optionally add more test methods.
 	
