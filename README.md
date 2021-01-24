@@ -11,14 +11,16 @@ The error prompts spice things up, google's your friend. *wink
 
 
 #### Week 2
-Focuses on implementations in the document package.
+Focuses on implementations in the document package. 
+
+A view on String immutability, memory models, interned strings and regular expressions.
 
 [Document class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/document/Document.java)
 
 [BasicDocument class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/document/BasicDocument.java)
 
 #### Week 3
-Centers on performance, below is a plot comparing two classes in the document package.
+Centers on performance (Asymptotic Analysis and Benchmarking), below is a plot comparing two classes in the document package.
 
 BasicDocument in blue has a steeper linear slope performing poorly as the input scales, compared to EfficientDocument in red. 
 
@@ -27,3 +29,6 @@ BasicDocument in blue has a steeper linear slope performing poorly as the input 
 **Benchmark Plot:**
 
 ![Week 3 Benchmark Image](https://github.com/bisscay/DataStructures-Performance/blob/main/benchmarkWeek3.png)
+
+#### Week 4
+In Part 1, JUnit is used to adopt a test-driven approach in developing a doubly linked list using sentinels.
