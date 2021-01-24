@@ -32,3 +32,7 @@ BasicDocument in blue has a steeper linear slope performing poorly as the input 
 
 #### Week 4
 In Part 1, JUnit is used to adopt a test-driven approach in developing a doubly linked list using sentinels.
+
+[My Linked List Tester](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/textgen/MyLinkedListTester.java)
+
+[My Linked List Class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/textgen/MyLinkedList.java)
