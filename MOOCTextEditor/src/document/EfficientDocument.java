@@ -1,6 +1,7 @@
 package document;
 
 import java.util.List;
+import java.util.ListIterator;
 
 /** 
  * A class that represents a text document
@@ -58,8 +59,10 @@ public class EfficientDocument extends Document {
 		String query;
 		// Check each string in tokens for words
 		int tokensSize = tokens.size();
-		for(int i = 0; i < tokensSize; ++i) { // O(n): span scales with text
-			query = tokens.get(i); // O(1): index-based access
+
+		ListIterator<String> lit = tokens.listIterator();
+		while(lit.hasNext()) {
+			query = lit.next(); // list walk through using iterator has space-complexity over get's search behavior
 			// strings with punctuation are ignored
 			if(isWord(query)) { // O(1): word comparison constant for a text
 				// increment word count
