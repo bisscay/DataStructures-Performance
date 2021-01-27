@@ -36,3 +36,7 @@ In Part 1, JUnit is used to adopt a test-driven approach in developing a doubly 
 [My Linked List Tester](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/textgen/MyLinkedListTester.java)
 
 [My Linked List Class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/textgen/MyLinkedList.java)
+
+In Part 2, a random MarkovTextGenerator is built. One key view is the space complexity advantage a StringBuilder  has over immutable strings.
+
+[Markov Text Generator](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/textgen/MarkovTextGeneratorLoL.java)
