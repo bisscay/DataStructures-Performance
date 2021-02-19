@@ -21,6 +21,34 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	{
 		root = new TrieNode();
 	}
+    
+    // find key
+    private TrieNode findKeyNode(String key) {
+    	// start from root
+    	TrieNode curr = root;
+    	// get the closest matching node to the key in  the trie
+    	char letter;
+    	for(int i = 0; i < key.length(); ++i) {
+    		letter = key.charAt(i);
+    		if(curr.getChild(letter) == null) return curr;
+    		curr = curr.getChild(letter);
+    	}
+    	return curr;
+    }
+    
+    // find key
+    private int findLastMatch(String key) {
+    	// start from root
+    	TrieNode curr = root;
+    	// get the closest matching node to the key in  the trie
+    	char letter;
+    	for(int i = 0; i < key.length(); ++i) {
+    		letter = key.charAt(i);
+    		if(curr.getChild(letter) == null) return i;
+    		curr = curr.getChild(letter);
+    	}
+    	return 0;
+    }
 	
 	
 	/** Insert a word into the trie.
@@ -40,7 +68,32 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean addWord(String word)
 	{
 	    //TODO: Implement this method.
-	    return false;
+		// find key
+		// if present return
+		// else create transition
+		
+		word = word.toLowerCase();
+		
+		TrieNode node = findKeyNode(word);
+		
+		// if present no addition is made
+		if(isWord(word)) {
+			return false;
+		}
+		
+		// if absent 
+		// start at unaccounted letters in word
+		int lastWordMatchIndex = findLastMatch(word);
+		for(int i = lastWordMatchIndex; i < word.length(); ++i) {
+			// create transition
+			node = node.insert(word.charAt(i));
+		}
+		
+		node.setEndsWord(true);
+		
+		++size;
+		
+	    return true;
 	}
 	
 	/** 
@@ -50,7 +103,7 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public int size()
 	{
 	    //TODO: Implement this method
-	    return 0;
+	    return size;
 	}
 	
 	
@@ -60,7 +113,11 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	public boolean isWord(String s) 
 	{
 	    // TODO: Implement this method
-		return false;
+		s = s.toLowerCase();
+		
+		TrieNode node = findKeyNode(s);
+		
+		return (node.endsWord()&& node.getText().equals(s));
 	}
 
 	/** 
@@ -125,6 +182,26 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
  		}
  	}
  	
+ 	public static void main(String[] args) {
+ 		AutoCompleteDictionaryTrie emptyDict; 
+ 		AutoCompleteDictionaryTrie smallDict;
+ 		AutoCompleteDictionaryTrie largeDict;
+ 		
+ 		emptyDict = new AutoCompleteDictionaryTrie();
+		smallDict = new AutoCompleteDictionaryTrie();
+		largeDict = new AutoCompleteDictionaryTrie();
 
+		smallDict.addWord("Hello");
+		smallDict.addWord("HElLo");
+		smallDict.addWord("help");
+		smallDict.addWord("he");
+		smallDict.addWord("hem");
+		smallDict.addWord("hot");
+		smallDict.addWord("hey");
+		smallDict.addWord("a");
+		smallDict.addWord("subsequent");
+		
+		smallDict.printTree();
+ 	}
 	
 }
