@@ -1,6 +1,7 @@
 package spelling;
 
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,8 +22,12 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 	{
 		root = new TrieNode();
 	}
-    
-    // find key
+
+    /**
+     * findKeyNode 
+     * @param key A String text to match in the tree
+     * @return A TrieNode that holds closest matching text in the tree (stem)
+     */
     private TrieNode findKeyNode(String key) {
     	// start from root
     	TrieNode curr = root;
@@ -36,19 +41,19 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	return curr;
     }
     
-    // find key
-    private int findLastMatch(String key) {
-    	// start from root
-    	TrieNode curr = root;
-    	// get the closest matching node to the key in  the trie
-    	char letter;
-    	for(int i = 0; i < key.length(); ++i) {
-    		letter = key.charAt(i);
-    		if(curr.getChild(letter) == null) return i;
-    		curr = curr.getChild(letter);
-    	}
-    	return 0;
-    }
+//    // Dead Code: find key - NeverUsed, left for reference
+//    private int findLastMatch(String key) {
+//    	// start from root
+//    	TrieNode curr = root;
+//    	// get the closest matching node to the key in  the trie
+//    	char letter;
+//    	for(int i = 0; i < key.length(); ++i) {
+//    		letter = key.charAt(i);
+//    		if(curr.getChild(letter) == null) return i;
+//    		curr = curr.getChild(letter);
+//    	}
+//    	return 0;
+//    }
 	
 	
 	/** Insert a word into the trie.
@@ -74,16 +79,25 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 		
 		word = word.toLowerCase();
 		
-		TrieNode node = findKeyNode(word);
-		
-		// if present no addition is made
+		// if present  and marked as word-node no addition is made
 		if(isWord(word)) {
 			return false;
 		}
 		
+		TrieNode node = findKeyNode(word);
+		int nodeTextSize = node.getText().length();
+		
+		// if present but not yet marked as word-node
+		if(nodeTextSize == word.length()) {
+			node.setEndsWord(true);
+			++size;
+			return true;
+		}
+
 		// if absent 
 		// start at unaccounted letters in word
-		int lastWordMatchIndex = findLastMatch(word);
+		// nodeTextSize has time-complexity over findLastMatch(word)
+		int lastWordMatchIndex = nodeTextSize;
 		for(int i = lastWordMatchIndex; i < word.length(); ++i) {
 			// create transition
 			node = node.insert(word.charAt(i));
@@ -144,9 +158,13 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
      public List<String> predictCompletions(String prefix, int numCompletions) 
      {
     	 // TODO: Implement this method
+    	List<String> result = new LinkedList<String>();
     	 // This method should implement the following algorithm:
     	 // 1. Find the stem in the trie.  If the stem does not appear in the trie, return an
     	 //    empty list
+    	 TrieNode stemNode = findKeyNode(prefix);
+    	 if(!(stemNode.getText().equals(prefix))) return result;
+    	 
     	 // 2. Once the stem is found, perform a breadth first search to generate completions
     	 //    using the following algorithm:
     	 //    Create a queue (LinkedList) and add the node that completes the stem to the back
@@ -157,8 +175,28 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
     	 //       If it is a word, add it to the completions list
     	 //       Add all of its child nodes to the back of the queue
     	 // Return the list of completions
+    	 Queue<TrieNode> breadthFirst = new LinkedList<>();
+    	 breadthFirst.add(stemNode);
     	 
-         return null;
+    	// hold entry temporarily
+    	 TrieNode temp;
+    	 String entry;
+    	 while(breadthFirst.size() > 0 && numCompletions > 0) {
+    		 temp = breadthFirst.remove();
+    		 // if present make addition
+    		 entry = temp.getText();
+        	 if(isWord(entry)) {
+    	    	 // place in list
+    	    	 result.add(entry);
+    	    	 --numCompletions;
+        	 }
+        	 // add children
+        	 for(Character child : temp.getValidNextCharacters()) {
+        		 breadthFirst.add(temp.getChild(child));
+        	 }
+    	 }
+    	 
+         return result;
      }
 
  	// For debugging
@@ -202,6 +240,12 @@ public class AutoCompleteDictionaryTrie implements  Dictionary, AutoComplete {
 		smallDict.addWord("subsequent");
 		
 		smallDict.printTree();
+		
+		List<String> completions;
+		
+		completions = smallDict.predictCompletions("", 10);
+		
+		System.out.println("---\n" +completions);
  	}
 	
 }
