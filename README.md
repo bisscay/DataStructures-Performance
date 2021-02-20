@@ -40,3 +40,33 @@ In Part 1, JUnit is used to adopt a test-driven approach in developing a doubly 
 In Part 2, a random MarkovTextGenerator is built. One key view is the space complexity advantage a StringBuilder  has over immutable strings.
 
 [Markov Text Generator](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/textgen/MarkovTextGeneratorLoL.java)
+
+#### Week 5
+Part 1: Spell checking and more benchmarking
+
+(Trie over TreeSet/Balanced BST, TreeSet over BST, BST over General Tree, Tree over LinkedList).
+
+Implemented a dictionary of words, and compared the performance of using a Binary Search Tree over a LinkedList. The TreeSet in the Java API uses balanced BSTs to store keys facilitating more efficient insertion and retrieval.
+
+The benchmark plot below shows the linked list implementation in red performing poorly when compared to the logrithmic plot of a balanced BST represented in yellow.
+
+**Benchmark Plot:**
+
+![Week 5 Benchmark Image](https://github.com/bisscay/DataStructures-Performance/blob/main/TreeSet_LinkedList_BenchMark.png)
+
+Tries have a potential performance advantage over TreeSets(Balanced BSTs) as the structure of the stored key is used to navigate the search. 
+
+BST only take advantage of their order relevant to each other.
+
+Linked List Implementation:
+[DictionaryLL class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/spelling/DictionaryLL.java)
+
+
+TreeSet Implementation:
+[DictionaryBST class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/spelling/DictionaryBST.java)
+
+Trie Implementation:
+[AutoCompleteDictionaryTrie class](https://github.com/bisscay/DataStructures-Performance/blob/main/MOOCTextEditor/src/spelling/AutoCompleteDictionaryTrie.java)
+
+
+...
